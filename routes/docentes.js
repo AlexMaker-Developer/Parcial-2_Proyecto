@@ -1,131 +1,44 @@
-//Ruta api/docentes
-const Router = require("express");
-const conString = require("../database/config");
-const sql = require("mssql");
+//Ruta api/alumnos
+const { Router } = require('express');
+const { check } = require('express-validator')
+const {
+    getDocentes,
+    getDocentesId,
+    addDocentes,
+    updateDocentes,
+    deleteDocente,
+} = require('../bml/controllers/docentes');
 
 const router = Router();
 
-//getall
-router.get("/", (req, res) => {
-    sql.on("error", (err) => {
-        console.log(err);
-        res.json(err);
-    });
-    sql
-        .connect(conString)
-        .then((pool) => {
-            return pool.request().execute("stp_docentes_getall");
-        })
-        .then((result) => {
-            return res.json(result.recordset);
-        })
-        .catch((err) => {
-            res.json(err);
-        });
-});
+// GetAll
+router.get('/', getDocentes);
 
+// GetById
+router.get('/id/:id', getDocentesId);
 
-//getbyid
-router.get("/:id", (req, res) => {
-    sql.on("error", (err) => {
-        console.log(err);
-        res.json(err);
-    });
-    sql
-        .connect(conString)
-        .then((pool) => {
-            return pool
-                .request()
-                .input("idDocente", sql.Int, req.params.id)
-                .execute("stp_docentes_getbyid");
-        })
-        .then((result) => {
-            return res.json(result.recordset[0]);
-        })
-        .catch((err) => {
-            res.json(err);
-        });
-});
+// Add User
+router.post('/', [
+        check('nombre', 'Nombre no válido').not().isEmpty(),
+        check('edad', 'edad no válido').isEmail(),
+        check('titulo', 'sexo no válido').not().isEmpty(),
+        check('tipo', 'semestre no válido').not().isEmpty(),
+    ],
+    addDocentes
+);
 
-//Add
-router.post("/", (req, res) => {
-    sql.on("error", (err) => {
-        console.log(err);
-        res.json(err);
-    });
-    sql
-        .connect(conString)
-        .then((pool) => {
-            return pool
-                .request()
-                .input("nombre", sql.NVarChar, req.body.nombre)
-                .input("edad", sql.Int, req.body.edad)
-                .input("titulo", sql.NVarChar, req.body.titulo)
-                .input("tipo", sql.NVarChar, req.body.tipo)
-                .execute("stp_docentes_add");
-        })
-        .then((result) => {
-            res.status(201).json({
-                status: "OK",
-                msg: "Docente agregado",
-            });
-        })
-        .catch((err) => {
-            res.json(err);
-        });
-});
+// Edit Docente
+router.put('/:id', [
+        check('nombre', 'Nombre no válido').not().isEmpty(),
+        check('edad', 'edad no válido').isEmail(),
+        check('titulo', 'sexo no válido').not().isEmpty(),
+        check('tipo', 'semestre no válido').not().isEmpty(),
+    ],
+    updateDocentes
+);
 
-//update
-router.put("/:id", (req, res) => {
-    sql.on("error", (err) => {
-        console.log(err);
-        res.json(err);
-    });
-    sql
-        .connect(conString)
-        .then((pool) => {
-            return pool
-                .request()
-                .input("idDocente", sql.Int, req.params.id)
-                .input("nombre", sql.NVarChar, req.body.nombre)
-                .input("edad", sql.Int, req.body.edad)
-                .input("titulo", sql.NVarChar, req.body.titulo)
-                .input("tipo", sql.NVarChar, req.body.tipo)
-                .execute("stp_docentes_update");
-        })
-        .then((result) => {
-            res.status(201).json({
-                status: "OK",
-                msg: "Docente modificado"
-            })
-        })
-        .catch((err) => {
-            res.json(err);
-        });
-});
+// Delete Alumno
+router.delete('/:id', deleteDocente);
 
-router.delete("/:id", (req, res) => {
-    sql.on("error", (err) => {
-        console.log(err);
-        res.json(err);
-    });
-    sql
-        .connect(conString)
-        .then((pool) => {
-            return pool
-                .request()
-                .input("idDocente", sql.Int, req.params.id)
-                .execute("stp_docentes_delete");
-        })
-        .then((result) => {
-            res.status(201).json({
-                status: "OK",
-                msg: "Docente eliminado",
-            });
-        })
-        .catch((err) => {
-            res.json(err);
-        });
-});
 
 module.exports = router;
