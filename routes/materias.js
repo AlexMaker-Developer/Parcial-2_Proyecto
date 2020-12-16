@@ -32,7 +32,7 @@ router.post('/', [
 router.put('/:id', [
         check('nombre', 'Nombre no válido').not().isEmpty(),
         check('horas', 'edad no válido').isEmail(),
-        check('horasp', 'sexo no válido').not().isEmpty(),
+        check('horasp', 'horasp no válido').not().isEmpty(),
         check('horast', 'horast no válido').not().isEmpty(),
         check('creditos', 'creditos no válido').not().isEmpty(),
     ],
