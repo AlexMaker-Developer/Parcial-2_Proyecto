@@ -4,11 +4,13 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const port = process.env.PORT;
+const path = require ("path");
 const app = express();
 
 
 app.use(cors({ origin: true }));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '/app/dist/adminpro')));
 
 // Routes
 app.use('/api/alumnos', require('./routes/alumnos'));
