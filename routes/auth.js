@@ -27,11 +27,7 @@ router.post(
 );
 
 router.post(
-    "/renew", [
-        check("email", "El email es obligatorio").not().isEmpty(),
-        check("token", "El token es obligatorio").not().isEmpty(),
-        validatorCampos,
-    ],
+    "/renew", valitationJWT,
     loginToken
 );
 

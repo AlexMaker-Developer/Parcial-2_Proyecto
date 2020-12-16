@@ -142,13 +142,13 @@ const googleSignIn = async(req, res = response) => {
     }
 }
 
-const loginToken = async(req, res = response) => {
+/*const loginToken = async(req, res = response) => {
     const { email, token } = req.body;
     const sqlParams = [{
         name: "email",
         value: email,
     }, ];
-    const usuario = await querySingle("stp_usuarios_login", sqlParams);
+    const usuario = await querySingle("stp_usuarios_resetpassword", sqlParams);
     if (usuario) {
         const tokenNew = await generateJWT(usuario.idUsuario);
         res.json({
@@ -163,7 +163,28 @@ const loginToken = async(req, res = response) => {
             data: null,
         });
     }
-};
+};*/
+
+const loginToken = async(req, res = response) => {
+    try {
+        const { id } = req.id;
+        const token = await generateJWT(id);
+
+        res.json({
+            status: true,
+            msg: 'Token nuevo',
+            data: { token }
+        });
+    } catch (e) {
+        console.error(e);
+        res.json({
+            status: false,
+            msg: 'Token no se puede renovar',
+            data: null
+        });
+
+    }
+}
 
 const cambiarPassword = async(req, res) => {
     const { email, password } = req.body;
